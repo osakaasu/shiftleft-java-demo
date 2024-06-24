@@ -18,15 +18,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SearchController {
 
   @RequestMapping(value = "/search/user", method = RequestMethod.GET)
-  public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
-    java.lang.Object message = new Object();
-    try {
-      ExpressionParser parser = new SpelExpressionParser();
-      Expression exp = parser.parseExpression(foo);
-      message = (Object) exp.getValue();
-    } catch (Exception ex) {
-      System.out.println(ex.getMessage());
-    }
-    return message.toString();
-  }
-}
+	@RequestMapping(value = "/search/user", method = RequestMethod.GET)
+	public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
+		try {
+			foo = WebUtils.htmlEscape(foo); // Escaping input to prevent XSS attacks
+			ExpressionParser parser = new SpelExpressionParser();
+			Expression exp = parser.parseExpression(foo);
+			Object message = exp.getValue();
+			return message.toString();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+			return "An error occurred while processing your request.";
+		}
+	}
+
+
