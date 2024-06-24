@@ -113,6 +113,33 @@ public class CustomerController {
 	public Customer getCustomer(@PathVariable("customerId") Long customerId) {
 
 		/* validate customer Id parameter */
+	    if (null == customerId) {
+	      throw new InvalidCustomerRequestException();
+	    }
+
+	    Customer customer = customerRepository.findOne(customerId);
+		if (null == customer) {
+		  throw new CustomerNotFoundException();
+	  }
+
+	  // Removed logging of sensitive account data
+	  // Account account = new Account(4242l,1234, "savings", 1, 0);
+	  // log.info("Account Data is {}", account);
+	  log.info("Customer Data is {}", customer);
+
+      try {
+        dispatchEventToSalesForce(String.format(" Customer %s Logged into SalesForce", customer));
+      } catch (Exception e) {
+        log.error("Failed to Dispatch Event to SalesForce . Details {} ", e.getLocalizedMessage());
+
+      }
+
+      return customer;
+    }
+
+	public Customer getCustomer(@PathVariable("customerId") Long customerId) {
+
+		/* validate customer Id parameter */
       if (null == customerId) {
         throw new InvalidCustomerRequestException();
       }
@@ -389,4 +416,5 @@ public class CustomerController {
 	}
 
 }
+
 
