@@ -70,7 +70,15 @@ public class AccountController {
         return account;
     }
 
-    @PostMapping("/account/{accountId}/addInterest")
+	@PostMapping("/account/{accountId}/addInterest")
+    public Account addInterestToAccount(@RequestParam double amount, @PathVariable long accountId) {
+        Account account = this.accountRepository.findOne(accountId);
+        account.addInterest();
+        this.accountRepository.save(account);
+        log.info("Account id: {}, Account type: {}, Updated Balance: {}", account.getId(), account.getType(), account.getBalance());
+        return account;
+    }
+
     public Account addInterestToAccount(@RequestParam double amount, @PathVariable long accountId) {
         Account account = this.accountRepository.findOne(accountId);
         account.addInterest();
@@ -80,4 +88,5 @@ public class AccountController {
     }
 
 }
+
 
