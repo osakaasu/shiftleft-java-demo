@@ -316,13 +316,14 @@ public class CustomerController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "/debugEscaped", method = RequestMethod.GET)
+	@RequestMapping(value = "/debugEscaped", method = RequestMethod.GET)
 	public void debugEscaped(@RequestParam String firstName, HttpServletResponse httpResponse,
 					  WebRequest request) throws IOException{
-		String escaped = HtmlUtils.htmlEscape(firstName);
-		System.out.println(escaped);
-		httpResponse.getOutputStream().println(escaped);
+		// No need to escape and print directly to the console.
+		System.out.println(firstName);
+		httpResponse.getOutputStream().println(firstName);
 	}
-	/**
+
 	 * Gets all customers.
 	 *
 	 * @return the customers
@@ -388,3 +389,4 @@ public class CustomerController {
 	}
 
 }
+
