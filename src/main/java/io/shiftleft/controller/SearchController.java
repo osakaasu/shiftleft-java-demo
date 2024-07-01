@@ -18,15 +18,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SearchController {
 
   @RequestMapping(value = "/search/user", method = RequestMethod.GET)
-  public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
-    java.lang.Object message = new Object();
-    try {
-      ExpressionParser parser = new SpelExpressionParser();
-      Expression exp = parser.parseExpression(foo);
-      message = (Object) exp.getValue();
-    } catch (Exception ex) {
-      System.out.println(ex.getMessage());
-    }
-    return message.toString();
-  }
-}
+	@RequestMapping(value = "/search/user", method = RequestMethod.GET)
+	public String doGetSearch(@RequestParam String foo, HttpServletResponse response, HttpServletRequest request) {
+		try {
+			// Validate input to prevent code injection
+			if (!isValidInput(foo)) {
+				throw new IllegalArgumentException("Invalid input");
+			}
+
+			// Use of SpEL expressions requires explicit trust model configuration
+			StandardEvaluationContext context = new StandardEvaluationContext();
+			context.setVariable("request", request);
+			context.setVariable("response", response);
+
+			ExpressionParser parser = new SpelExpressionParser();
+			Expression exp = parser.parseExpression(foo);
+			return exp.getValue(context).toString();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
+			return null;
+		}
+	}
+
+
